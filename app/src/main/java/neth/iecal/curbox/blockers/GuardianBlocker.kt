@@ -23,6 +23,7 @@ import neth.iecal.curbox.guardian.GuardianAiDetector
 import neth.iecal.curbox.guardian.GuardianConfig
 import neth.iecal.curbox.guardian.GuardianKeywordMatcher
 import neth.iecal.curbox.services.BaseBlockingService
+import neth.iecal.curbox.ui.overlay.GuardianBlockActivity
 
 /**
  * Guardian (NSFW content blocking) — accessibility-service hook.
@@ -261,20 +262,39 @@ class GuardianBlocker {
     private fun currentPackage(): String? =
         service.rootInActiveWindow?.packageName?.toString()
 
-    /** Minimal block: go home + notify. Full overlay/unlock UI lands in M4. */
+    /** Block: full-screen GuardianBlockActivity + event log (M4). */
     private fun block(reason: String) {
         Handler(Looper.getMainLooper()).post {
             try {
-                service.performGlobalAction(android.accessibilityservice.AccessibilityService.GLOBAL_ACTION_HOME)
-                Toast.makeText(
-                    service,
-                    "Guardian: NSFW content blocked ($reason)",
-                    Toast.LENGTH_SHORT,
-                ).show()
-                Log.i(TAG, "Blocked package=${currentPackage()} reason=$reason")
+                val pkg = currentPackage() ?: ""
+                logBlock(pkg, reason)
+                GuardianBlockActivity.start(service, reason, pkg)
+                Log.i(TAG, "Blocked package=$pkg reason=$reason")
             } catch (t: Throwable) {
+                // Fail-open to go-home so the block never silently breaks.
+                try {
+                    service.performGlobalAction(
+                        android.accessibilityservice.AccessibilityService.GLOBAL_ACTION_HOME
+                    )
+                } catch (_: Throwable) {}
                 crashLogger.logNonFatalError(Exception(t))
             }
+        }
+    }
+
+    /** Appends a block event to the ring-buffer log (SharedPreferences). */
+    private fun logBlock(pkg: String, reason: String) {
+        try {
+            val now = java.text.SimpleDateFormat(
+                "yyyy-MM-dd HH:mm:ss",
+                java.util.Locale.getDefault(),
+            ).format(java.util.Date())
+            val entry = "$now | $pkg | $reason"
+            val existing = prefs.getString("block_log", "") ?: ""
+            val lines = existing.split("\n").filter { it.isNotBlank() }.takeLast(499) + entry
+            prefs.edit { putString("block_log", lines.joinToString("\n")) }
+        } catch (t: Throwable) {
+            crashLogger.logNonFatalError(Exception(t))
         }
     }
 

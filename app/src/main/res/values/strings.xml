@@ -1719,4 +1719,13 @@
     <string name="guardian_model_import_failed">Import failed for %1$s</string>
     <string name="guardian_card_title">Guardian AI</string>
     <string name="guardian_card_subtitle">Block NSFW content</string>
+
+    <string name="guardian_block_title">Content Blocked</string>
+    <string name="guardian_block_reason_fmt">Guardian blocked: %1$s</string>
+    <string name="guardian_block_package_fmt">App: %1$s</string>
+    <string name="guardian_go_home">Go home</string>
+    <string name="guardian_block_settings">Guardian settings</string>
+    <string name="guardian_log_title">Block log</string>
+    <string name="guardian_log_clear">Clear log</string>
+    <string name="guardian_log_empty">No blocks yet.</string>
 </resources>

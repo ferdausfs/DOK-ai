@@ -186,6 +186,18 @@ class GuardianFragment : Fragment() {
             openDocument.launch("*/*")
         }
 
+        // ── activity log ────────────────────────────────────────────────────────
+        val logView = view.findViewById<TextView>(R.id.guardian_block_log)
+        fun refreshLog() {
+            val log = prefs.getString("block_log", "") ?: ""
+            logView.text = if (log.isBlank()) getString(R.string.guardian_log_empty) else log
+        }
+        refreshLog()
+        view.findViewById<MaterialButton>(R.id.btn_log_clear).setOnClickListener {
+            prefs.edit().putString("block_log", "").apply()
+            refreshLog()
+        }
+
         view.findViewById<MaterialButton>(R.id.btn_back).setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
