@@ -43,6 +43,7 @@ androidComponents {
 android {
     namespace = "neth.iecal.curbox"
     compileSdk = 35
+    androidResources { noCompress += "tflite" }
     flavorDimensions += "version"
 
     lint {
@@ -212,6 +213,10 @@ dependencies {
 
     implementation(libs.mpandroidchart)
     implementation(libs.timerangepicker)
+
+    // Guardian (NSFW content blocking) — on-device TFLite AI
+    implementation(libs.tensorflow.lite)
+    implementation(libs.tensorflow.lite.gpu)
 
 }
 androidComponents {
