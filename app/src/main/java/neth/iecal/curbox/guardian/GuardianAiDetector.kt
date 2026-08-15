@@ -178,8 +178,8 @@ class GuardianAiDetector(private val context: Context) {
             try {
                 if (!isImageComplex(bitmap)) return@withLock false
 
-                val threshold = config.aiThreshold.coerceAtLeast(0.80f)
-                val voteNeeded = (config.gridVoteCount + 1).coerceAtMost(4)
+                val threshold = config.aiThreshold.coerceIn(0.50f, 0.95f)
+                val voteNeeded = config.gridVoteCount.coerceIn(1, 4)
 
                 val fullScore = extractGuardianScore(
                     runInferenceSafe(interp, bitmap) ?: return@withLock false
@@ -387,7 +387,7 @@ class GuardianAiDetector(private val context: Context) {
         if (count == 0) return false
         val avgL = sumL / count
         val variance = (sumL2 / count) - (avgL * avgL)
-        return variance in 200.0..8500.0
+        return variance in 150.0..9000.0
     }
 
     private fun runInferenceSafe(interp: Interpreter, bitmap: Bitmap): FloatArray? {
