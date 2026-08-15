@@ -43,6 +43,17 @@ class GuardianBlocker {
         private const val PREFS = "guardian_prefs"
         private const val SCAN_THROTTLE_MS = 800L
         private const val MIN_IMAGE_REGION_PX = 80
+
+        /**
+         * Tells the running service (if any) to reload its Guardian config.
+         * Settings screens call this after persisting changes.
+         */
+        fun refresh(context: Context) {
+            try {
+                val intent = Intent(INTENT_ACTION_REFRESH).setPackage(context.packageName)
+                context.sendBroadcast(intent)
+            } catch (_: Throwable) {}
+        }
     }
 
     private lateinit var service: BaseBlockingService
