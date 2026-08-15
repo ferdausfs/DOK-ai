@@ -20,7 +20,7 @@ object GuardianConstants {
     // Full-screen screenshots are noisy (UI chrome/text/many small images), so
     // the full-screen path requires a STRONGER NSFW gate before the gender
     // model is consulted. Content-region scans keep the normal gate.
-    const val FULL_SCREEN_NSFW_GATE = 0.80f
+    const val FULL_SCREEN_NSFW_GATE = 0.70f
 
     // Model files (imported into filesDir via GuardianModelImportManager).
     const val MODEL_LEGACY = "guardian_model.tflite"
