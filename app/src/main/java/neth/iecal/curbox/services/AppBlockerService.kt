@@ -23,6 +23,7 @@ import neth.iecal.curbox.anti_stimulants.MindfulMessage
 import neth.iecal.curbox.blockers.AntiUninstallBlocker
 import neth.iecal.curbox.blockers.AppBlocker
 import neth.iecal.curbox.blockers.FocusModeBlocker
+import neth.iecal.curbox.blockers.GuardianBlocker
 import neth.iecal.curbox.blockers.KeywordBlocker
 import neth.iecal.curbox.blockers.ReelBlocker
 import neth.iecal.curbox.blockers.ReelScriptRunner
@@ -44,6 +45,7 @@ class AppBlockerService : BaseBlockingService() {
     private val reelBlocker = ReelBlocker()
     private val reelScriptRunner = ReelScriptRunner()
     private var keywordBlocker = KeywordBlocker()
+    private val guardianBlocker = GuardianBlocker()
     private val uiHider = UiHider()
     private val nodePicker = NodePicker()
     private val antiUninstallBlocker = AntiUninstallBlocker()
@@ -107,6 +109,15 @@ class AppBlockerService : BaseBlockingService() {
             Log.e("Usage Tracking error", error.toString())
         }
 
+        try {
+            // Guardian (NSFW content blocking) — its own containment boundary so
+            // a detection failure can never take down the service.
+            val pkg = event.packageName?.toString() ?: ""
+            if (pkg.isNotBlank()) guardianBlocker.onAccessibilityEvent(event, pkg)
+        } catch (error: Exception) {
+            Log.e(GuardianBlocker.TAG, "Guardian event check failed", error)
+        }
+
         val eventCopy = AccessibilityEvent.obtain(event)
         val result = eventChannel.trySend(eventCopy)
 
@@ -166,6 +177,7 @@ class AppBlockerService : BaseBlockingService() {
         reelBlocker.setupBlocker(this)
         reelScriptRunner.setup(this)
         keywordBlocker.setupBlocker(this)
+        guardianBlocker.setupBlocker(this)
         grayScaleFilter.setup(this)
         if (BuildConfig.SUPPORTS_UI_HIDER) {
             uiHider.setupBlocker(this)
@@ -188,6 +200,7 @@ class AppBlockerService : BaseBlockingService() {
         appBlocker.setupReceivers()
         reelBlocker.setupReceivers()
         keywordBlocker.setupReceivers()
+        guardianBlocker.setupReceivers()
         grayScaleFilter.setupReceivers()
         if (BuildConfig.SUPPORTS_UI_HIDER) {
             uiHider.setupReceivers()
@@ -224,6 +237,8 @@ class AppBlockerService : BaseBlockingService() {
             reelBlocker.removeReceivers()
             appBlocker.onDestroy()
             keywordBlocker.removeReceivers()
+            guardianBlocker.removeReceivers()
+            guardianBlocker.onDestroy()
             grayScaleFilter.unregisterReceivers()
             if (BuildConfig.SUPPORTS_UI_HIDER) {
                 uiHider.removeReceivers()
