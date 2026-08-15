@@ -1697,4 +1697,26 @@
     <string name="unit_minutes">Minutes</string>
     <string name="unit_hours">Hours</string>
     <string name="unit_days">Days</string>
+
+    <!-- Guardian (NSFW content blocking) -->
+    <string name="guardian_screen_title">Guardian AI</string>
+    <string name="guardian_screen_subtitle">On-device NSFW content blocking using AI detection.</string>
+    <string name="guardian_enable_title">NSFW content blocking</string>
+    <string name="guardian_enable_subtitle">Scan the screen and block explicit content in real time.</string>
+    <string name="guardian_gender_title">Your gender</string>
+    <string name="guardian_gender_none">None</string>
+    <string name="guardian_gender_male">Male</string>
+    <string name="guardian_gender_female">Female</string>
+    <string name="guardian_thresholds_title">Detection sensitivity</string>
+    <string name="guardian_keywords_title">NSFW keywords</string>
+    <string name="guardian_keyword_hint">Add a keyword or regex (regex:&#8230;)</string>
+    <string name="guardian_keyword_add">Add keyword</string>
+    <string name="guardian_models_title">AI models</string>
+    <string name="guardian_import">Import</string>
+    <string name="guardian_model_ready">Imported (%1$d KB)</string>
+    <string name="guardian_model_missing">Not imported</string>
+    <string name="guardian_model_imported">Imported %1$s</string>
+    <string name="guardian_model_import_failed">Import failed for %1$s</string>
+    <string name="guardian_card_title">Guardian AI</string>
+    <string name="guardian_card_subtitle">Block NSFW content</string>
 </resources>
