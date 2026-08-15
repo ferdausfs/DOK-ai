@@ -164,10 +164,11 @@ class GuardianFragment : Fragment() {
         // ── model import ──────────────────────────────────────────────────────
         fun bindModel(label: TextView, name: String) {
             val mgr = GuardianModelImportManager.get(context)
-            label.text = if (mgr.isModelImported(name)) {
-                getString(R.string.guardian_model_ready, mgr.modelSizeBytes(name) / 1024)
-            } else {
-                getString(R.string.guardian_model_missing)
+            val st = mgr.modelStatus(name)
+            label.text = when (st.source) {
+                "bundled" -> getString(R.string.guardian_model_bundled, st.sizeBytes / 1024)
+                "imported" -> getString(R.string.guardian_model_ready, st.sizeBytes / 1024)
+                else -> getString(R.string.guardian_model_missing)
             }
         }
         bindModel(view.findViewById(R.id.txt_model_legacy), GuardianConstants.MODEL_LEGACY)
